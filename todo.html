@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Todo</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #f0f2f5;
+  color: #333;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  padding-top: 60px;
+}
+
+.app {
+  width: 480px;
+  max-width: 95vw;
+}
+
+h1 {
+  text-align: center;
+  font-size: 28px;
+  color: #1a1a2e;
+  margin-bottom: 24px;
+  letter-spacing: 1px;
+}
+
+.input-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.input-row input {
+  flex: 1;
+  padding: 10px 14px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 15px;
+  outline: none;
+  transition: border-color .2s;
+}
+
+.input-row input:focus { border-color: #4f8cff; }
+
+.input-row button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  background: #4f8cff;
+  color: #fff;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background .2s;
+}
+
+.input-row button:hover { background: #3a6fd8; }
+
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  font-size: 13px;
+  color: #888;
+}
+
+.filters {
+  display: flex;
+  gap: 4px;
+}
+
+.filters button {
+  padding: 5px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background: #fff;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all .15s;
+}
+
+.filters button:hover { border-color: #4f8cff; color: #4f8cff; }
+.filters button.active { background: #4f8cff; color: #fff; border-color: #4f8cff; }
+
+.clear-btn {
+  background: none;
+  border: none;
+  color: #999;
+  font-size: 13px;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.clear-btn:hover { color: #e74c3c; }
+
+.list {
+  list-style: none;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 12px rgba(0,0,0,.06);
+  overflow: hidden;
+}
+
+.list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border-bottom: 1px solid #f0f0f0;
+  transition: background .15s;
+}
+
+.list li:last-child { border-bottom: none; }
+.list li:hover { background: #fafafa; }
+
+.list li .circle {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid #ccc;
+  cursor: pointer;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all .2s;
+}
+
+.list li .circle:hover { border-color: #4f8cff; }
+
+.list li.done .circle {
+  background: #4f8cff;
+  border-color: #4f8cff;
+}
+
+.list li.done .circle::after {
+  content: '';
+  display: block;
+  width: 5px;
+  height: 10px;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg) translateY(-1px);
+}
+
+.list li .text {
+  flex: 1;
+  font-size: 15px;
+  word-break: break-word;
+}
+
+.list li.done .text {
+  text-decoration: line-through;
+  color: #bbb;
+}
+
+.list li .edit-input {
+  flex: 1;
+  font-size: 15px;
+  padding: 4px 8px;
+  border: 2px solid #4f8cff;
+  border-radius: 6px;
+  outline: none;
+}
+
+.list li .delete-btn {
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: #ccc;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all .15s;
+  flex-shrink: 0;
+}
+
+.list li .delete-btn:hover {
+  background: #fee;
+  color: #e74c3c;
+}
+
+.empty {
+  text-align: center;
+  padding: 40px 16px;
+  color: #bbb;
+  font-size: 14px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 12px rgba(0,0,0,.06);
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 16px;
+  background: #fff;
+  border-radius: 0 0 10px 10px;
+  font-size: 13px;
+  color: #888;
+  border-top: 1px solid #f0f0f0;
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <h1>Todo</h1>
+  <div class="input-row">
+    <input id="input" type="text" placeholder="添加新任务..." maxlength="200">
+    <button id="addBtn">添加</button>
+  </div>
+  <div class="toolbar">
+    <span id="count">0 项</span>
+    <div class="filters">
+      <button data-filter="all" class="active">全部</button>
+      <button data-filter="active">未完成</button>
+      <button data-filter="completed">已完成</button>
+    </div>
+    <button class="clear-btn" id="clearBtn">清除已完成</button>
+  </div>
+  <ul class="list" id="list"></ul>
+</div>
+
+<script>
+const input   = document.getElementById('input');
+const addBtn  = document.getElementById('addBtn');
+const list    = document.getElementById('list');
+const countEl = document.getElementById('count');
+const clearBtn = document.getElementById('clearBtn');
+const filterBtns = document.querySelectorAll('.filters button');
+
+let todos  = JSON.parse(localStorage.getItem('todos') || '[]');
+let filter = 'all';
+
+function save() { localStorage.setItem('todos', JSON.stringify(todos)); }
+
+function render() {
+  const filtered = filter === 'all'     ? todos
+                 : filter === 'active'  ? todos.filter(t => !t.done)
+                 :                        todos.filter(t => t.done);
+
+  const activeCount = todos.filter(t => !t.done).length;
+  countEl.textContent = activeCount + ' 项';
+
+  if (filtered.length === 0) {
+    list.innerHTML = '<div class="empty">暂无任务</div>';
+    return;
+  }
+
+  list.innerHTML = filtered.map(t => {
+    const editing = t._editing;
+    return `
+      <li class="${t.done ? 'done' : ''}" data-id="${t.id}">
+        <div class="circle" data-action="toggle"></div>
+        ${editing
+          ? `<input class="edit-input" value="${escapeHtml(t.text)}" data-action="edit">`
+          : `<span class="text" data-action="dblclick">${escapeHtml(t.text)}</span>`
+        }
+        <button class="delete-btn" data-action="delete" title="删除">&times;</button>
+      </li>`;
+  }).join('');
+}
+
+function escapeHtml(s) {
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+function add(text) {
+  text = text.trim();
+  if (!text) return;
+  todos.push({ id: Date.now(), text, done: false });
+  save();
+  render();
+  input.value = '';
+}
+
+function toggle(id) {
+  const t = todos.find(t => t.id === id);
+  if (t) { t.done = !t.done; save(); render(); }
+}
+
+function remove(id) {
+  todos = todos.filter(t => t.id !== id);
+  save();
+  render();
+}
+
+function clearCompleted() {
+  todos = todos.filter(t => !t.done);
+  save();
+  render();
+}
+
+function startEdit(id) {
+  todos.forEach(t => t._editing = (t.id === id));
+  render();
+  const inp = list.querySelector('.edit-input');
+  if (inp) { inp.focus(); inp.selectionStart = inp.value.length; }
+}
+
+function commitEdit(id, text) {
+  const t = todos.find(t => t.id === id);
+  if (t) {
+    const v = text.trim();
+    if (v) t.text = v; else { remove(id); return; }
+    delete t._editing;
+    save();
+    render();
+  }
+}
+
+// Event delegation
+addBtn.addEventListener('click', () => add(input.value));
+input.addEventListener('keydown', e => { if (e.key === 'Enter') add(input.value); });
+
+list.addEventListener('click', e => {
+  const li  = e.target.closest('li');
+  if (!li) return;
+  const id  = Number(li.dataset.id);
+  const action = e.target.dataset.action || e.target.closest('[data-action]')?.dataset?.action;
+
+  if (action === 'toggle') toggle(id);
+  if (action === 'delete') remove(id);
+});
+
+list.addEventListener('dblclick', e => {
+  const li = e.target.closest('li');
+  if (!li) return;
+  const id = Number(li.dataset.id);
+  const action = e.target.dataset.action || e.target.closest('[data-action]')?.dataset?.action;
+  if (action === 'dblclick' || !action) startEdit(id);
+});
+
+list.addEventListener('keydown', e => {
+  if (!e.target.classList.contains('edit-input')) return;
+  const li = e.target.closest('li');
+  const id = Number(li.dataset.id);
+
+  if (e.key === 'Enter') { e.preventDefault(); commitEdit(id, e.target.value); }
+  if (e.key === 'Escape') { todos.forEach(t => delete t._editing); save(); render(); }
+});
+
+list.addEventListener('blur', e => {
+  if (!e.target.classList.contains('edit-input')) return;
+  const li = e.target.closest('li');
+  const id = Number(li.dataset.id);
+  commitEdit(id, e.target.value);
+}, true);
+
+clearBtn.addEventListener('click', clearCompleted);
+
+filterBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    filterBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    filter = btn.dataset.filter;
+    render();
+  });
+});
+
+render();
+</script>
+</body>
+</html>
