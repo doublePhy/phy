@@ -1,10 +1,20 @@
 {
   "permissions": {
     "allow": [
-      "Bash(start *)",
-      "Bash(/c/Program Files/GitHub CLI/gh.exe auth *)",
-      "Bash(\"/c/Program Files/GitHub CLI/gh.exe\" auth login --with-token)",
-      "Bash(curl *)"
+      "Bash(gh auth *)",
+      "Bash(gh repo *)",
+      "Bash(git init *)",
+      "Bash(git remote *)",
+      "Bash(git fetch *)",
+      "Bash(git --no-pager diff --stat HEAD origin/master)",
+      "Bash(git ls-tree *)",
+      "Bash(git checkout *)",
+      "Bash(git branch *)",
+      "Bash(git pull *)",
+      "Read(//c/Users/86180/**)",
+      "Bash(git config *)",
+      "Bash(cp /e/homework/testwork/.claude/settings.local.json /e/homework/testwork/.claude/settings.local.json.bak)",
+      "Bash(rm /e/homework/testwork/.claude/settings.local.json)"
     ]
   }
 }
