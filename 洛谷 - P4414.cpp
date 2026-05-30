@@ -13,7 +13,7 @@ int main() {
     
     string order;
     cin >> order;//可能是ABC、ACB、BAC、BCA、CAB、CBA中的一种
-    //所以插值固定，所以使用ASCII码之差来判断输出哪个数
+    //输入的时候字母之间没空格，所以差值固定，所以使用ASCII码之差来判断输出哪个数
     
     // 按给定顺序输出
     for (int i = 0; i < 3; i++) {
