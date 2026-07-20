@@ -7,7 +7,7 @@ int main()
 {
     int n;
     cin >> n;
-    int a[n];
+    int a[100005];
     //输入数据
     for (int i = 0; i < n; i++){
         cin >> a[i];
