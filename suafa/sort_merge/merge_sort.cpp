@@ -19,15 +19,15 @@ void merge_sort(int q[],int l,int r){
     while(i<=mid && j<=r){
         if(q[i]<=q[j]) temp[k++]=q[i++];
         else temp[k++]=q[j++];
-        res
+        
     }
     
     while(i<=mid) temp[k++]=q[i++];
     while(j<=r)  temp[k++]=q[j++];
 
-    int k=0;
+    int t=0; 
     for(i=l ; i<=r ; i++)
-        q[i]=temp[k++];
+        q[i]=temp[t++];
     
 }
 

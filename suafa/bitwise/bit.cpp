@@ -17,5 +17,5 @@ int main() {
         cout << num << endl;
         num = 0;
         }
-    system("pause");
+    return 0;
 }
